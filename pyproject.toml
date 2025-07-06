@@ -4,9 +4,6 @@ version = "0.1.0"
 description = "Async Python client for the pCloud API"
 authors = ["honsma235"]
 
-[tool.poetry-dynamic-versioning]
-enable = true
-
 [tool.poetry.dependencies]
 python = "^3.10"
 aiohttp = "^3.9.0"
@@ -19,6 +16,11 @@ basedpyright = "^1.29.4"
 aioresponses = "^0.7.8"
 python-dotenv = "^1.1.1"
 commitizen = "^4.8.3"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
 
 [tool.ruff]
 # Set the maximum line length to 79.
