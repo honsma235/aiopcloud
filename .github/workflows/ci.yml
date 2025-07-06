@@ -35,4 +35,5 @@ jobs:
       run: poetry run pytest --tb=short --disable-warnings
 
     - name: Check conventional commits
+      if: github.ref != 'refs/heads/main'
       run: poetry run cz check --rev-range origin/main..HEAD
