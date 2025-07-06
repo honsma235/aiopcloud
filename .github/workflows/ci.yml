@@ -32,6 +32,8 @@ jobs:
       run: poetry run basedpyright
 
     - name: Run tests
+      env:
+        EAPI_PCLOUD_COM_TEST_TOKEN: ${{ secrets.EAPI_PCLOUD_COM_TEST_TOKEN }}
       run: poetry run pytest --tb=short --disable-warnings
 
     - name: Check conventional commits
