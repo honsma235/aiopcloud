@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-type-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - uses: abatilo/actions-poetry@v3
+
+    - name: Install dependencies
+      run: poetry install --no-root
+
+    - name: Format with ruff
+      run: poetry run ruff format .
+
+    - name: Lint with ruff
+      run: poetry run ruff check .
+
+    - name: Type check with basedpyright
+      run: poetry run basedpyright
+
+    - name: Run tests
+      run: poetry run pytest --tb=short --disable-warnings
+
+    - name: Check conventional commits
+      run: poetry run cz check --rev-range origin/main..HEAD
