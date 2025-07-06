@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aiopcloud"
-version = "0.1.0"
+version = "0.0.0"
 description = "Async Python client for the pCloud API"
 authors = ["honsma235"]
 
