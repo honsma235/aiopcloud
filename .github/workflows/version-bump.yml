@@ -42,7 +42,6 @@ jobs:
           
           poetry run cz bump --yes --increment ${{ github.event.inputs.increment }} --changelog
 
-          git remote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com/${{ github.repository }}
-          git push origin HEAD:main -v
-          git push --tags -v
+          git push origin HEAD:main
+          git push --tags
 
