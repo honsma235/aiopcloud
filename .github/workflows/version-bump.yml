@@ -38,12 +38,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          poetry run cz bump --yes --increment ${{ github.event.inputs.increment }} --changelog
-
           git config --global user.name github-actions
           git config --global user.email github-actions@github.com
-
           git config --list
+
+          poetry run cz bump --yes --increment ${{ github.event.inputs.increment }} --changelog
 
           git add pyproject.toml CHANGELOG.md
           git commit -m "ci(release): bump version"
