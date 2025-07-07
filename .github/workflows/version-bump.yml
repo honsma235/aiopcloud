@@ -40,8 +40,8 @@ jobs:
         run: |
           poetry run cz bump --yes --increment ${{ github.event.inputs.increment }} --changelog
 
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          git config --global user.name github-actions
+          git config --global user.email github-actions@github.com
 
           git add pyproject.toml CHANGELOG.md
           git commit -m "ci(release): bump version"
