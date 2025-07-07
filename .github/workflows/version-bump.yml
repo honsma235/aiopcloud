@@ -43,6 +43,8 @@ jobs:
           git config --global user.name github-actions
           git config --global user.email github-actions@github.com
 
+          git config --list
+
           git add pyproject.toml CHANGELOG.md
           git commit -m "ci(release): bump version"
 
