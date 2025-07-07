@@ -44,10 +44,5 @@ jobs:
 
           poetry run cz bump --yes --increment ${{ github.event.inputs.increment }} --changelog
 
-          git add pyproject.toml CHANGELOG.md
-          git commit -m "ci(release): bump version"
-
-          NEW_TAG=$(poetry version --short)
-          git tag v$NEW_TAG
-
           git push origin HEAD:main --follow-tags
+
