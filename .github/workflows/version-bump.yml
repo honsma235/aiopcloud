@@ -1,0 +1,53 @@
+name: Version Bump
+
+on:
+  workflow_dispatch:
+    inputs:
+      increment:
+        type: choice
+        description: 'Version increment (patch, minor, major)'
+        options: 
+        - patch
+        - minor
+        - mayor
+        required: true
+        default: 'patch'
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # ensure full history for Commitizen
+          
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+          cache: 'poetry'
+
+      - name: Install dependencies
+        run: |
+          pip install poetry
+          poetry install --no-root --no-interaction
+
+      - name: Run Commitizen bump and generate changelog
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          poetry run cz bump --yes --increment ${{ github.event.inputs.increment }} --changelog
+
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+          git add pyproject.toml CHANGELOG.md
+          git commit -m "ci(release): bump version"
+
+          NEW_TAG=$(poetry version --short)
+          git tag v$NEW_TAG
+
+          git push origin HEAD:main --follow-tags
