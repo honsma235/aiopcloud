@@ -1,3 +1,12 @@
+## v0.0.2 (2025-07-08)
+
+### Fix
+
+- setup.sh
+- all finally :)
+- version-bump
+- version-bump
+
 ## v0.0.1 (2025-07-07)
 
 ### Feat
