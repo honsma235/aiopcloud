@@ -1,3 +1,12 @@
+## v0.0.4 (2025-07-08)
+
+### Fix
+
+- like reaaaaaly!
+- really?
+- test only
+- really now!!
+
 ## v0.0.3 (2025-07-08)
 
 ### Fix
