@@ -1,3 +1,10 @@
+## v0.0.6 (2025-07-08)
+
+### Fix
+
+- dont kiddy me
+- finally yeeeea
+
 ## v0.0.5 (2025-07-08)
 
 ### Fix
