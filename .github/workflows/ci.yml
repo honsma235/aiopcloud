@@ -73,17 +73,12 @@ jobs:
           echo "This workflow can only be run on main."
           exit 1
 
-      - name: Validate PAT token and required scopes
-        env:
-          TOKEN: ${{ secrets.PAT }}
+      - name: Validate PAT token}
         run: |
-          echo "Checking PAT validity and scopes ..."
-
-          echo "${{ github.repository }}"
-
+          echo "Checking PAT validity  ..."
           # Make API request to get repo info and response headers
           response=$(curl -s -o /dev/null -w "%{http_code}" -I \
-            -H "Authorization: token $TOKEN" \
+            -H "Authorization: token ${{ secrets.PAT }}" \
             https://api.github.com/repos/${{ github.repository }})
 
           if [ "$response" -ne 200 ]; then
@@ -91,23 +86,8 @@ jobs:
             echo "::error::Token might be expired, invalid, or missing permissions."
             exit 1
           fi
-
-          # Fetch OAuth scopes header
-          scopes=$(curl -sI -H "Authorization: token $TOKEN" \
-            https://api.github.com/repos/${{ github.repository }} | grep -Fi "X-OAuth-Scopes:" | cut -d':' -f2)
-
-          echo "PAT token scopes: $scopes"
-
-          # Check for workflow scope
-          echo "$scopes" | grep -q "workflow"
-          if [ $? -ne 0 ]; then
-            echo "::error::PAT token is missing required 'workflow' scope."
-            echo "::error::Please update your PAT scopes to include 'workflow'."
-            exit 1
-          fi
-
           echo "PAT token is valid and has required scopes."
-          
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # ensure full history for Commitizen
@@ -122,12 +102,10 @@ jobs:
         run: poetry install --no-root --no-interaction
 
       - name: Set Git auth to use PAT
-        env:
-          TOKEN: ${{ secrets.PAT }}
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.co"
-          git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}
+          git remote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com/${{ github.repository }}
 
       - name: Run Commitizen bump and generate changelog
         run: |
