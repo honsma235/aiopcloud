@@ -53,6 +53,7 @@ typeCheckingMode = "standard"
 [tool.commitizen]
 name = "cz_conventional_commits"
 tag_format = "v$version"
+annotated_tag = true
 version_scheme = "pep440"
 version_provider = "poetry"
 update_changelog_on_bump = true
