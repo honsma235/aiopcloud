@@ -6,7 +6,7 @@ on:
       - "v*"
 
 concurrency:
-  group: tag-release-${{ github.ref_name }}
+  group: release-job
   cancel-in-progress: true
 
 jobs:
