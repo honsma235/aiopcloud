@@ -65,7 +65,7 @@ jobs:
     
     permissions:
       contents: write
-      workflow: write
+      actions: write
 
     steps:
       - name: Ensure on main branch
