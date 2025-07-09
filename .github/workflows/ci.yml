@@ -65,7 +65,6 @@ jobs:
     
     permissions:
       contents: write
-      actions: write
 
     steps:
       - name: Ensure on main branch
@@ -73,21 +72,6 @@ jobs:
         run: |
           echo "This workflow can only be run on main."
           exit 1
-
-      - name: Validate PAT token}
-        run: |
-          echo "Checking PAT validity  ..."
-          # Make API request to get repo info and response headers
-          response=$(curl -s -o /dev/null -w "%{http_code}" -I \
-            -H "Authorization: token ${{ secrets.PAT }}" \
-            https://api.github.com/repos/${{ github.repository }})
-
-          if [ "$response" -ne 200 ]; then
-            echo "::error::PAT token check failed: HTTP status $response"
-            echo "::error::Token might be expired, invalid, or missing permissions."
-            exit 1
-          fi
-          echo "PAT token is valid and has required scopes."
 
       - uses: actions/checkout@v4
         with:
@@ -102,13 +86,26 @@ jobs:
       - name: Install dependencies
         run: poetry install --no-root --no-interaction
 
-      - name: Set Git auth to use PAT
+      - name: Set Git auth
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.co"
-          git remote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com/${{ github.repository }}
 
       - name: Run Commitizen bump and generate changelog
+        id: bump
         run: |
-          poetry run cz bump --yes --increment ${{ github.event.inputs.increment }} --changelog
-          git push origin HEAD:main --follow-tags
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          poetry run cz bump --yes --increment ${{ github.event.inputs.increment }} --changelog --changelog-to-stdout  >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "new_version=$(poetry version -s)" >> $GITHUB_OUTPUT
+
+          git push origin HEAD:main
+          git push origin --tags
+
+      - name: Create GitHub Draft-Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v${{ steps.bump.outputs.new_version }}"
+          name: Release "v${{ steps.bump.outputs.new_version }}"
+          body_path: "${{ steps.bump.outputs.changelog }}"
+          draft: true

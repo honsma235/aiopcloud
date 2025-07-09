@@ -1,13 +1,8 @@
-name: Release
+name: Publish to PyPI
 
 on:
-  push:
-    tags:
-      - "v*"
-
-concurrency:
-  group: release-job
-  cancel-in-progress: true
+  release:
+    types: [published]
 
 jobs:
   release:
@@ -22,6 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
 
       - uses: actions/setup-python@v5
         with:
@@ -35,12 +32,6 @@ jobs:
       - name: Build package
         run: poetry build --no-interaction
 
-      #- name: Publish package distributions to PyPI
-      #  uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
-          body_path: CHANGELOG.md
