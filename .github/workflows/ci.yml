@@ -94,9 +94,8 @@ jobs:
       - name: Run Commitizen bump and generate changelog
         id: bump
         run: |
-          echo "changelog<<EOF" >> $GITHUB_OUTPUT
-          poetry run cz bump --yes --increment ${{ github.event.inputs.increment }} --changelog --changelog-to-stdout  >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          CHANGELOG_FILE="changelog.txt"
+          poetry run cz bump --yes --increment ${{ github.event.inputs.increment }} --changelog --changelog-to-stdout > "$CHANGELOG_FILE"
           echo "new_version=$(poetry version -s)" >> $GITHUB_OUTPUT
 
           git push origin HEAD:main
@@ -107,5 +106,5 @@ jobs:
         with:
           tag_name: "v${{ steps.bump.outputs.new_version }}"
           name: Release "v${{ steps.bump.outputs.new_version }}"
-          body_path: "${{ steps.bump.outputs.changelog }}"
+          body_path: changelog.txt
           draft: true
