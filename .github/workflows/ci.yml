@@ -95,11 +95,13 @@ jobs:
         id: bump
         run: |
           poetry run cz bump --yes --increment ${{ github.event.inputs.increment }}
-          echo "new_version=$(poetry version -s)" >> $GITHUB_OUTPUT
           git push origin HEAD:main
           git push origin --tags
 
-          poetry run cz changelog --incremental
+          NEW_VERSION="v$(poetry version -s)"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          
+          poetry run cz changelog $NEW_VERSION
 
       - name: Create GitHub Draft-Release
         uses: softprops/action-gh-release@v2
