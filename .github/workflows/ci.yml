@@ -106,7 +106,7 @@ jobs:
       - name: Create GitHub Draft-Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "v${{ steps.bump.outputs.new_version }}"
-          name: Release "v${{ steps.bump.outputs.new_version }}"
+          tag_name: "${{ steps.bump.outputs.new_version }}"
+          name: Release "${{ steps.bump.outputs.new_version }}"
           body_path: CHANGELOG.md
           draft: true
