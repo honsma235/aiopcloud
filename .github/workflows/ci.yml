@@ -94,17 +94,17 @@ jobs:
       - name: Run Commitizen bump and generate changelog
         id: bump
         run: |
-          CHANGELOG_FILE="changelog.md"
-          poetry run cz bump --yes --increment ${{ github.event.inputs.increment }} --changelog --changelog-to-stdout > "$CHANGELOG_FILE"
+          poetry run cz bump --yes --increment ${{ github.event.inputs.increment }}
           echo "new_version=$(poetry version -s)" >> $GITHUB_OUTPUT
-
           git push origin HEAD:main
           git push origin --tags
+
+          poetry run cz changelog --incremental
 
       - name: Create GitHub Draft-Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: "v${{ steps.bump.outputs.new_version }}"
           name: Release "v${{ steps.bump.outputs.new_version }}"
-          body_path: changelog.md
+          body_path: CHANGELOG.md
           draft: true
