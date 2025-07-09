@@ -94,7 +94,7 @@ jobs:
       - name: Run Commitizen bump and generate changelog
         id: bump
         run: |
-          CHANGELOG_FILE="changelog.txt"
+          CHANGELOG_FILE="changelog.md"
           poetry run cz bump --yes --increment ${{ github.event.inputs.increment }} --changelog --changelog-to-stdout > "$CHANGELOG_FILE"
           echo "new_version=$(poetry version -s)" >> $GITHUB_OUTPUT
 
@@ -106,5 +106,5 @@ jobs:
         with:
           tag_name: "v${{ steps.bump.outputs.new_version }}"
           name: Release "v${{ steps.bump.outputs.new_version }}"
-          body_path: changelog.txt
+          body_path: changelog.md
           draft: true
