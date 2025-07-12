@@ -1,0 +1,115 @@
+name: CI & Version Bump
+
+on:
+  pull_request:
+    branches: main
+  push:
+    branches: main
+  workflow_dispatch:
+    inputs:
+      increment:
+        type: choice
+        description: 'Version increment (patch, minor, major)'
+        options: 
+        - patch
+        - minor
+        - mayor
+        required: true
+        default: 'patch'
+
+
+jobs:
+  format-lint-type-test:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # ensure full history for Commitizen
+        
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
+    - uses: abatilo/actions-poetry@v3
+
+    - name: Install dependencies
+      run: poetry install --no-root --no-interaction
+
+    - name: Format with ruff
+      run: poetry run ruff format .
+
+    - name: Lint with ruff
+      run: poetry run ruff check .
+
+    - name: Type check with basedpyright
+      run: poetry run basedpyright
+
+    - name: Run tests
+      env:
+        EAPI_PCLOUD_COM_TEST_TOKEN: ${{ secrets.EAPI_PCLOUD_COM_TEST_TOKEN }}
+      run: poetry run pytest --tb=short --disable-warnings
+
+    - name: Check conventional commits (branch)
+      if: github.ref != 'refs/heads/main'   # only on branch, otherwise origin/main..HEAD is empty
+      run: poetry run cz check --rev-range origin/main..HEAD
+
+    - name: Check conventional commits (main)
+      if: github.ref == 'refs/heads/main'   # check last commit on main
+      run: poetry run cz check --rev-range HEAD~1..HEAD
+
+  bump:
+    needs: format-lint-type-test
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    
+    permissions:
+      contents: write
+
+    steps:
+      - name: Ensure on main branch
+        if: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          echo "This workflow can only be run on main."
+          exit 1
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # ensure full history for Commitizen
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - uses: abatilo/actions-poetry@v3
+
+      - name: Install dependencies
+        run: poetry install --no-root --no-interaction
+
+      - name: Set Git auth
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.co"
+
+      - name: Run Commitizen bump and generate changelog
+        id: bump
+        run: |
+          poetry run cz bump --yes --increment ${{ github.event.inputs.increment }}
+          git push origin HEAD:main
+          git push origin --tags
+
+          NEW_VERSION="v$(poetry version -s)"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          
+          poetry run cz changelog $NEW_VERSION
+
+      - name: Create GitHub Draft-Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.bump.outputs.new_version }}
+          name: ${{ steps.bump.outputs.new_version }}
+          body_path: CHANGELOG.md
+          draft: true

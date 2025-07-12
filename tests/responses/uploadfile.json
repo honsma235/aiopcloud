@@ -1,0 +1,28 @@
+{
+    "result": 0,
+    "fileids": [
+        1729212
+    ],
+    "metadata": [
+        {
+            "ismine": true,
+            "id": "f1729212",
+            "created": "Wed, 02 Oct 2013 14:29:11 +0000",
+            "modified": "Wed, 02 Oct 2013 14:29:11 +0000",
+            "hash": 10681749967730527559,
+            "isshared": false,
+            "isfolder": false,
+            "category": 1,
+            "parentfolderid": 0,
+            "icon": "image",
+            "fileid": 1729212,
+            "height": 600,
+            "width": 900,
+            "path": "\/Simple image.jpg",
+            "name": "Simple image.jpg",
+            "contenttype": "image\/jpeg",
+            "size": 73269,
+            "thumb": true
+        }
+    ]
+}

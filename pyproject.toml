@@ -1,0 +1,69 @@
+[project]
+name = "aiopcloud"
+version = "0.0.1"
+description = "Async Python client for the pCloud API"
+homepage = "https://github.com/honsma235/aiopcloud"
+repository = "https://github.com/honsma235/aiopcloud"
+documentation = "https://github.com/honsma235/aiopcloud"
+authors = [
+    {name = "honsma235",email = "114189750+honsma235@users.noreply.github.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "aiohttp (>=3.11.0,<4.0.0)",
+]
+
+[project.urls]
+homepage = "https://github.com/honsma235/aiopcloud"
+repository = "https://github.com/honsma235/aiopcloud"
+"Bug Tracker" = "https://github.com/honsma235/aiopcloud/issues"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+pytest-asyncio = "^0.23.0"
+ruff = "^0.12.0"
+basedpyright = "^1.29.4"
+aioresponses = "^0.7.8"
+python-dotenv = "^1.1.1"
+commitizen = "^4.1.0"
+pre-commit = "^4.2.0"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+# Set the maximum line length to 79.
+line-length = 100
+fix = true
+
+[tool.ruff.lint]
+extend-select = ["ALL"]
+ignore = [
+    "D203",     # blank line before class
+    "D213",     # multi-line-summary-second-line
+    "COM812",   # missing-trailing-comma, may cause conflicts when used with the formatter
+    "ANN401",   # any-type, complains about Any typing...
+    "SLF001",   # private-member-access, should not complain inside same package
+    ]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"tests/**/*.py" = [
+    # at least this three should be fine in tests:
+    "S101", # asserts allowed in tests...
+    "D", 
+    # The below are debateable
+    "PLR2004", # Magic value used in comparison, ...
+]
+
+[tool.basedpyright]
+typeCheckingMode = "standard"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "v$version"
+version_scheme = "pep440"
+version_provider = "pep621"

@@ -1,0 +1,44 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run ruff format",
+            "type": "shell",
+            "command": "poetry run ruff format .",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run ruff linter",
+            "type": "shell",
+            "command": "poetry run ruff check --fix .",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run basedpyright",
+            "type": "shell",
+            "command": "poetry run basedpyright",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run pytest",
+            "type": "shell",
+            "command": "poetry run pytest",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run all checks",
+            "dependsOn": [
+                "Run ruff format",
+                "Run ruff linter",
+                "Run basedpyright",
+                "Run pytest"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        }
+    ]
+}

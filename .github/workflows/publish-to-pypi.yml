@@ -1,0 +1,36 @@
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write # IMPORTANT: this permission is mandatory for trusted publishing
+
+    # Dedicated environments with protections for publishing are strongly recommended.
+    environment: pypi
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - uses: abatilo/actions-poetry@v3
+
+      - name: Install dependencies
+        run: poetry install --no-root --no-interaction
+
+      - name: Build package
+        run: poetry build --no-interaction
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
