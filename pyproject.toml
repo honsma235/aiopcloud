@@ -1,6 +1,6 @@
 [project]
 name = "aiopcloud"
-version = "0.0.1"
+version = "0.1.0"
 description = "Async Python client for the pCloud API"
 homepage = "https://github.com/honsma235/aiopcloud"
 repository = "https://github.com/honsma235/aiopcloud"
